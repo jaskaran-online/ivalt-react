@@ -1,0 +1,4 @@
+mkdir ivalt-react
+cd ivalt-react
+npm init -y
+npm install axios @types/react react typescript 
