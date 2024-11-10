@@ -44,36 +44,44 @@ var react_1 = require("react");
 var api_1 = require("../api");
 var axios_1 = __importDefault(require("axios"));
 var useBiometricAuth = function (_a) {
-    var _b = _a === void 0 ? {} : _a, _c = _b.pollingInterval, pollingInterval = _c === void 0 ? 2000 : _c, _d = _b.maxAttempts, maxAttempts = _d === void 0 ? 150 : _d;
-    var _e = (0, react_1.useState)("idle"), status = _e[0], setStatus = _e[1];
-    var _f = (0, react_1.useState)(null), error = _f[0], setError = _f[1];
-    var _g = (0, react_1.useState)(false), polling = _g[0], setPolling = _g[1];
-    var _h = (0, react_1.useState)(0), attempts = _h[0], setAttempts = _h[1];
+    var _b = _a.pollingInterval, pollingInterval = _b === void 0 ? 2000 : _b, _c = _a.maxAttempts, maxAttempts = _c === void 0 ? 150 : _c, requestFrom = _a.requestFrom, onSuccess = _a.onSuccess, onError = _a.onError;
+    var _d = (0, react_1.useState)("idle"), status = _d[0], setStatus = _d[1];
+    var _e = (0, react_1.useState)(null), error = _e[0], setError = _e[1];
+    var _f = (0, react_1.useState)(false), isPolling = _f[0], setIsPolling = _f[1];
+    var _g = (0, react_1.useState)(0), attempts = _g[0], setAttempts = _g[1];
+    var _h = (0, react_1.useState)(null), userData = _h[0], setUserData = _h[1];
+    var _j = (0, react_1.useState)(""), currentMobileNumber = _j[0], setCurrentMobileNumber = _j[1];
     var stopPolling = (0, react_1.useCallback)(function () {
-        setPolling(false);
+        setIsPolling(false);
         setAttempts(0);
     }, []);
     (0, react_1.useEffect)(function () {
         var pollTimer;
-        var pollResult = function (mobileNumber) { return __awaiter(void 0, void 0, void 0, function () {
-            var result, err_1;
-            var _a, _b, _c;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
+        var pollResult = function () { return __awaiter(void 0, void 0, void 0, function () {
+            var result, err_1, error_1;
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
-                        _d.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, (0, api_1.checkBiometricResult)(mobileNumber)];
+                        _b.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, (0, api_1.checkBiometricResult)(currentMobileNumber)];
                     case 1:
-                        result = _d.sent();
+                        result = _b.sent();
                         if (result.authenticated) {
                             setStatus("success");
+                            if (result.userData) {
+                                setUserData(result.userData);
+                                onSuccess === null || onSuccess === void 0 ? void 0 : onSuccess(result.userData);
+                            }
                             stopPolling();
                             return [2 /*return*/];
                         }
                         setAttempts(function (prev) {
                             if (prev >= maxAttempts) {
+                                var timeoutError = new Error("Authentication timeout");
                                 setStatus("error");
-                                setError(new Error("Authentication timeout"));
+                                setError(timeoutError);
+                                onError === null || onError === void 0 ? void 0 : onError(timeoutError);
                                 stopPolling();
                                 return prev;
                             }
@@ -81,56 +89,61 @@ var useBiometricAuth = function (_a) {
                         });
                         return [3 /*break*/, 3];
                     case 2:
-                        err_1 = _d.sent();
+                        err_1 = _b.sent();
+                        error_1 = err_1;
                         if (axios_1.default.isAxiosError(err_1)) {
                             if (((_a = err_1.response) === null || _a === void 0 ? void 0 : _a.status) === 422) {
-                                // Continue polling
-                                return [2 /*return*/];
-                            }
-                            if (((_b = err_1.response) === null || _b === void 0 ? void 0 : _b.status) === 403 || ((_c = err_1.response) === null || _c === void 0 ? void 0 : _c.status) === 404) {
-                                setStatus("error");
-                                setError(err_1);
-                                stopPolling();
-                                return [2 /*return*/];
+                                return [2 /*return*/]; // Continue polling
                             }
                         }
                         setStatus("error");
-                        setError(err_1);
+                        setError(error_1);
+                        onError === null || onError === void 0 ? void 0 : onError(error_1);
                         stopPolling();
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
                 }
             });
         }); };
-        if (polling) {
-            pollTimer = setInterval(function () {
-                pollResult("");
-            }, pollingInterval);
+        if (isPolling && currentMobileNumber) {
+            pollTimer = setInterval(pollResult, pollingInterval);
         }
         return function () {
             if (pollTimer) {
                 clearInterval(pollTimer);
             }
         };
-    }, [polling, pollingInterval, maxAttempts, stopPolling]);
+    }, [
+        isPolling,
+        pollingInterval,
+        maxAttempts,
+        stopPolling,
+        currentMobileNumber,
+        onSuccess,
+        onError,
+    ]);
     var startAuth = function (mobileNumber) { return __awaiter(void 0, void 0, void 0, function () {
-        var err_2;
+        var err_2, error_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
                     setStatus("requesting");
                     setError(null);
-                    return [4 /*yield*/, (0, api_1.requestBiometricAuth)({ mobileNumber: mobileNumber })];
+                    setUserData(null);
+                    setCurrentMobileNumber(mobileNumber);
+                    return [4 /*yield*/, (0, api_1.requestBiometricAuth)({ mobileNumber: mobileNumber, requestFrom: requestFrom })];
                 case 1:
                     _a.sent();
                     setStatus("polling");
-                    setPolling(true);
+                    setIsPolling(true);
                     return [3 /*break*/, 3];
                 case 2:
                     err_2 = _a.sent();
+                    error_2 = err_2;
                     setStatus("error");
-                    setError(err_2);
+                    setError(error_2);
+                    onError === null || onError === void 0 ? void 0 : onError(error_2);
                     return [3 /*break*/, 3];
                 case 3: return [2 /*return*/];
             }
@@ -141,6 +154,8 @@ var useBiometricAuth = function (_a) {
         error: error,
         startAuth: startAuth,
         stopPolling: stopPolling,
+        userData: userData,
+        isPolling: isPolling,
     };
 };
 exports.useBiometricAuth = useBiometricAuth;
