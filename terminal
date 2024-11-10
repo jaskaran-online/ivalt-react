@@ -1,4 +1,5 @@
 mkdir ivalt-react
 cd ivalt-react
 npm init -y
-npm install axios @types/react react typescript 
+npm install axios @types/react react typescript intl-tel-input tailwindcss postcss autoprefixer
+npx tailwindcss init -p

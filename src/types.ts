@@ -31,3 +31,20 @@ export type BiometricStatus =
   | "polling"
   | "success"
   | "error";
+
+export interface BiometricAuthHookResult {
+  status: BiometricStatus;
+  error: Error | null;
+  startAuth: (mobileNumber: string) => Promise<void>;
+  stopPolling: () => void;
+  userData: UserData | null;
+  isPolling: boolean;
+}
+
+export interface BiometricAuthHookConfig {
+  pollingInterval?: number;
+  maxAttempts?: number;
+  requestFrom: string;
+  onSuccess?: (userData: UserData) => void;
+  onError?: (error: Error) => void;
+}
