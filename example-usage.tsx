@@ -8,13 +8,14 @@ initializeIValt({
 });
 
 function BiometricAuthComponent() {
-  const { status, error, startAuth, stopPolling } = useBiometricAuth({
-    pollingInterval: 2000, // Optional: default is 2000ms
-    maxAttempts: 150, // Optional: default is 150 attempts (5 minutes)
+  const { status, error, startAuth, stopPolling, userData } = useBiometricAuth({
+    pollingInterval: 2000,
+    maxAttempts: 150,
+    requestFrom: "MyAwesomeApp",
   });
 
   const handleStartAuth = () => {
-    startAuth("1234567890"); // Pass the mobile number
+    startAuth("1234567890");
   };
 
   return (
@@ -22,6 +23,14 @@ function BiometricAuthComponent() {
       <button onClick={handleStartAuth}>Start Authentication</button>
       <p>Status: {status}</p>
       {error && <p>Error: {error.message}</p>}
+      {userData && (
+        <div>
+          <h3>User Information:</h3>
+          <p>Name: {userData.name}</p>
+          <p>Email: {userData.email}</p>
+          <p>Mobile: {userData.mobileNumber}</p>
+        </div>
+      )}
     </div>
   );
 }

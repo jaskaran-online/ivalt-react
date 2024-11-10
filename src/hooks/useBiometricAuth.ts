@@ -1,26 +1,30 @@
 import { useState, useEffect, useCallback } from "react";
 import { requestBiometricAuth, checkBiometricResult } from "../api";
-import { BiometricStatus } from "../types";
+import { BiometricStatus, UserData } from "../types";
 import axios from "axios";
 
 interface UseBiometricAuthProps {
   pollingInterval?: number;
   maxAttempts?: number;
+  requestFrom: string;
 }
 
 export const useBiometricAuth = ({
   pollingInterval = 2000,
-  maxAttempts = 150, // 5 minutes with 2-second intervals
-}: UseBiometricAuthProps = {}) => {
+  maxAttempts = 150,
+  requestFrom,
+}: UseBiometricAuthProps) => {
   const [status, setStatus] = useState<BiometricStatus>("idle");
   const [error, setError] = useState<Error | null>(null);
   const [polling, setPolling] = useState(false);
   const [attempts, setAttempts] = useState(0);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   const stopPolling = useCallback(() => {
     setPolling(false);
     setAttempts(0);
   }, []);
+
   useEffect(() => {
     let pollTimer: ReturnType<typeof setTimeout>;
 
@@ -30,6 +34,9 @@ export const useBiometricAuth = ({
 
         if (result.authenticated) {
           setStatus("success");
+          if (result.userData) {
+            setUserData(result.userData);
+          }
           stopPolling();
           return;
         }
@@ -79,8 +86,9 @@ export const useBiometricAuth = ({
     try {
       setStatus("requesting");
       setError(null);
+      setUserData(null);
 
-      await requestBiometricAuth({ mobileNumber });
+      await requestBiometricAuth({ mobileNumber, requestFrom });
 
       setStatus("polling");
       setPolling(true);
@@ -95,5 +103,6 @@ export const useBiometricAuth = ({
     error,
     startAuth,
     stopPolling,
+    userData,
   };
 };
