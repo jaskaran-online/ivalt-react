@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useBiometricAuth } from "ivalt-react";
-import { UserData } from "./types";
+import { UserData } from "ivalt-react";
 
 export const CustomAuthForm: React.FC = () => {
   const [phone, setPhone] = useState("");

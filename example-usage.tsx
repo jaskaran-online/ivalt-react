@@ -1,6 +1,6 @@
 import React from "react";
 import { initializeIValt } from "ivalt-react";
-import { BiometricAuthForm } from "./components/BiometricAuthForm";
+import { BiometricAuthForm } from "./dist/components/BiometricAuthForm";
 
 // Initialize the package with your configuration
 initializeIValt({

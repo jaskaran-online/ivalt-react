@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* IntlTelInput custom styles */
+.iti {
+  width: 100%;
+}
+
+.iti__flag {
+  background-image: url("node_modules/intl-tel-input/build/img/flags.png");
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .iti__flag {
+    background-image: url("node_modules/intl-tel-input/build/img/flags@2x.png");
+  }
+} 
