@@ -1,7 +1,5 @@
 # iVALT React - Biometric Authentication Package
 
----
-
 A flexible React hooks package for integrating iVALT biometric authentication into your React applications.
 
 ## INSTALLATION
@@ -26,19 +24,19 @@ npm install intl-tel-input tailwindcss postcss autoprefixer
 
 ## PACKAGE STRUCTURE
 
-📦 ivalt-react
-┣ 📂 src
-┃ ┣ 📂 api
-┃ ┃ ┗ 📜 index.ts - Core API integration functions
-┃ ┣ 📂 config
-┃ ┃ ┗ 📜 index.ts - Configuration and setup management
-┃ ┣ 📂 types
-┃ ┃ ┗ 📜 index.ts - TypeScript type definitions
-┃ ┣ 📂 hooks
-┃ ┃ ┗ 📜 useBiometricAuth.ts - Main authentication hook
-┃ ┣ 📂 components
-┃ ┃ ┗ 📜 BiometricAuthForm.tsx - Optional pre-built form component
-┃ ┗ 📜 index.ts - Main package exports
+### `ivalt-react`
+
+- **📂 api**
+  - `index.ts`: ⚙️ Core API integration functions
+- **📂 config**
+  - `index.ts`: 🛠️ Configuration and setup management
+- **📂 types**
+  - `index.ts`: 📝 TypeScript type definitions
+- **📂 hooks**
+  - `useBiometricAuth.ts`: 🔐 Main authentication hook
+- **📂 components**
+  - `BiometricAuthForm.tsx`: 📝 Optional pre-built form component
+- `index.ts`: 🚀 Main package exports
 
 ## BASIC SETUP
 
@@ -198,5 +196,5 @@ For additional support:
 
 MIT License - See LICENSE file for details
 
-Version: 1.0.3
+Version: 1.0.4
 Last Updated: 2024-11-11
