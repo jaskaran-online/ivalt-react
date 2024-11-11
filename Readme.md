@@ -1,12 +1,10 @@
 # iVALT React - Biometric Authentication Package
 
-===========================================
+---
 
 A flexible React hooks package for integrating iVALT biometric authentication into your React applications.
 
 ## INSTALLATION
-
----
 
 To install the package, run one of the following commands:
 
@@ -191,12 +189,14 @@ Common issues:
 For additional support:
 
 - Check documentation at docs.ivalt.com
-- Submit issues at https://github.com/ivalt/ivalt-react/issues
+- Submit issues at https://github.com/iVALT-Inc/ivalt-react/issues
 - Contact support at support@ivalt.com
+
+---
 
 ## LICENSE
 
 MIT License - See LICENSE file for details
 
-Version: 1.0.2
+Version: 1.0.3
 Last Updated: 2024-11-11
