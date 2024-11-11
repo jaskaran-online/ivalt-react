@@ -1,6 +1,20 @@
 {
+  "version": "1.0.2",
+  "keywords": [
+    "ivalt",
+    "biometric",
+    "authentication",
+    "react",
+    "hooks",
+    "form",
+    "passwordless"
+  ],
   "name": "ivalt-react",
-  "version": "1.0.0",
+  "author": "iVALT::jaskaran.singh@ivalt.com",
+  "license": "MIT",
+  "repository": "https://github.com/iVALT-Inc/ivalt-react",
+  "homepage": "https://docs.ivalt.com",
+  "bugs": "https://github.com/iVALT-Inc/ivalt-react/issues",
   "description": "React hooks for iVALT Biometric Authentication",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

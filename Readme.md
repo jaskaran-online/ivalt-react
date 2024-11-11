@@ -30,14 +30,17 @@ npm install intl-tel-input tailwindcss postcss autoprefixer
 
 ivalt-react/
 ├── src/
-│ ├── api.ts - API integration functions
-│ ├── config.ts - Configuration management
-│ ├── types.ts - TypeScript type definitions
-│ ├── index.ts - Main export file
-│ └── hooks/
-│ └── useBiometricAuth.ts - Main authentication hook
-│ └── components/
-│ └── BiometricAuthForm.tsx - Optional pre-built form component
+│ ├── api/
+│ │ └── index.ts - Core API integration functions
+│ ├── config/
+│ │ └── index.ts - Configuration and setup management  
+│ ├── types/
+│ │ └── index.ts - TypeScript type definitions
+│ ├── hooks/
+│ │ └── useBiometricAuth.ts - Main authentication hook
+│ ├── components/
+│ │ └── BiometricAuthForm.tsx - Optional pre-built form component
+│ └── index.ts - Main package exports
 
 ## BASIC SETUP
 
@@ -161,7 +164,10 @@ The hook handles various error scenarios:
 • Invalid phone numbers
 • Server errors
 
-Errors are available through: 1. The error object in hook result 2. The onError callback function
+Errors are available through:
+
+1. The error object in hook result
+2. The onError callback function
 
 ## SECURITY BEST PRACTICES
 
@@ -183,13 +189,13 @@ Common issues:
 
 For additional support:
 
-- Check documentation at [documentation URL]
-- Submit issues at [GitHub repository URL]
-- Contact support at [support email]
+- Check documentation at docs.ivalt.com
+- Submit issues at https://github.com/ivalt/ivalt-react/issues
+- Contact support at support@ivalt.com
 
 ## LICENSE
 
 MIT License - See LICENSE file for details
 
-Version: 1.0.0
-Last Updated: 2024
+Version: 1.0.1
+Last Updated: 2024-11-11
