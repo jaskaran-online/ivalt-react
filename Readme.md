@@ -22,22 +22,6 @@ If you want to use the pre-built form component with Tailwind CSS, install these
 npm install intl-tel-input tailwindcss postcss autoprefixer
 ```
 
-## PACKAGE STRUCTURE
-
-### `ivalt-react`
-
-- **📂 api**
-  - `index.ts`: ⚙️ Core API integration functions
-- **📂 config**
-  - `index.ts`: 🛠️ Configuration and setup management
-- **📂 types**
-  - `index.ts`: 📝 TypeScript type definitions
-- **📂 hooks**
-  - `useBiometricAuth.ts`: 🔐 Main authentication hook
-- **📂 components**
-  - `BiometricAuthForm.tsx`: 📝 Optional pre-built form component
-- `index.ts`: 🚀 Main package exports
-
 ## BASIC SETUP
 
 1. Initialize the package before use:
