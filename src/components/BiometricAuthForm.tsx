@@ -1,11 +1,14 @@
 import React, { useRef, useEffect, useState } from "react";
 import intlTelInput from "intl-tel-input";
-import "intl-tel-input/build/css/intlTelInput.css";
+import "intl-tel-input/build/css/intlTelInput.min.css";
 import { initializeIValt, useBiometricAuth } from "ivalt-react";
 
 interface BiometricAuthFormProps {
   onSuccess?: (userData: any) => void;
 }
+
+const UTILS_SCRIPT_URL =
+  "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js";
 
 export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({
   onSuccess,
@@ -23,24 +26,33 @@ export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({
 
   useEffect(() => {
     if (phoneInputRef.current) {
-      const iti = intlTelInput(phoneInputRef.current, {
-        utilsScript:
-          "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js",
-        separateDialCode: true,
-        initialCountry: "auto",
-        geoIpLookup: (callback) => {
-          fetch("https://ipapi.co/json")
-            .then((res) => res.json())
-            .then((data) => callback(data.country_code))
-            .catch(() => callback("us"));
-        },
+      const loadUtils = new Promise<void>((resolve) => {
+        const script = document.createElement("script");
+        script.src = UTILS_SCRIPT_URL;
+        script.async = true;
+        script.onload = () => resolve();
+        document.body.appendChild(script);
       });
 
-      setItiInstance(iti);
+      loadUtils.then(() => {
+        const iti = intlTelInput(phoneInputRef.current!, {
+          utilsScript: UTILS_SCRIPT_URL,
+          separateDialCode: true,
+          initialCountry: "auto",
+          geoIpLookup: (callback) => {
+            fetch("https://ipapi.co/json")
+              .then((res) => res.json())
+              .then((data) => callback(data.country_code))
+              .catch(() => callback("us"));
+          },
+        });
 
-      return () => {
-        iti.destroy();
-      };
+        setItiInstance(iti);
+
+        return () => {
+          iti.destroy();
+        };
+      });
     }
   }, []);
 
