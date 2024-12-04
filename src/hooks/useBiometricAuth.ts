@@ -58,7 +58,7 @@ export const useBiometricAuth = ({
       } catch (err: any) {
         const error = err as Error;
         if (axios.isAxiosError(err)) {
-          if (err.response?.status === 422) {
+          if (err.response?.status === 422 || err.response?.status === 404) {
             return; // Continue polling
           }
         }
