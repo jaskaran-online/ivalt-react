@@ -34,11 +34,11 @@ export const useBiometricAuth = ({
       try {
         const result = await checkBiometricResult(currentMobileNumber);
 
-        if (result.authenticated) {
+        if (result?.data?.status) {
           setStatus("success");
-          if (result.userData) {
-            setUserData(result.userData);
-            onSuccess?.(result.userData);
+          if (result?.data?.details) {
+            setUserData(result.data.details);
+            onSuccess?.(result.data.details);
           }
           stopPolling();
           return;

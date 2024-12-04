@@ -66,59 +66,63 @@ export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({ onSuccess 
   };
 
   return (
-    <div className="max-w-md mx-auto p-8 bg-white rounded-xl shadow-2xl border border-gray-100">
-      <h2 className="text-3xl font-bold mb-8 text-gray-800 text-center">
-        Biometric Authentication
-      </h2>
+    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-gray-50">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-gray-200 transition-all duration-300 hover:shadow-xl">
+        <div className="p-6 sm:p-8">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800 text-center">
+            Biometric Authentication
+          </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-2">
-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-            Phone Number
-          </label>
-          <input
-            ref={phoneInputRef}
-            type="tel"
-            id="phone"
-            className="block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
-            onChange={handlePhoneChange}
-          />
-          {phoneNumber && (
-            <p className="text-sm text-red-500 mt-1">
-              Please enter a valid phone number
-            </p>
-          )}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                Phone Number
+              </label>
+              <div className="relative">
+                <input
+                  ref={phoneInputRef}
+                  type="tel"
+                  id="phone"
+                  className="block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm"
+                  onChange={handlePhoneChange}
+                />
+              </div>
+              {phoneNumber && !itiInstance?.isValidNumber() && (
+                <p className="text-sm text-red-500 mt-1">
+                  Please enter a valid phone number
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={status === "polling"}
+              className={`w-full py-3.5 px-4 rounded-lg text-white font-medium transition-all duration-300 ease-in-out shadow-sm
+                ${status !== "polling"
+                  ? "bg-blue-600 hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  : "bg-gray-400 cursor-not-allowed"
+                }`}
+            >
+              {status === "polling" ? (
+                <span className="flex items-center justify-center space-x-2">
+                  <span>Verifying...</span>
+                </span>
+              ) : (
+                "Start Authentication"
+              )}
+            </button>
+
+            {status !== "idle" && (
+              <div className={`mt-6 p-4 rounded-lg ${status === "success" ? "bg-green-50" : status === "error" ? "bg-red-50" : "bg-blue-50"}`}>
+                <div className={`text-center ${getStatusColor()}`}>
+                  <p className="font-semibold text-lg capitalize">Status: {status}</p>
+                  {error && <p className="text-red-500 mt-2">{error.message}</p>}
+                </div>
+              </div>
+            )}
+          </form>
         </div>
-
-        <button
-          type="submit"
-          disabled={status === "polling"}
-          className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all duration-300 ease-in-out
-            ${status !== "polling"
-              ? "bg-blue-600 hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              : "bg-gray-400 cursor-not-allowed"
-            }`}
-        >
-          {status === "polling" ? (
-            <span className="flex items-center justify-center">
-              <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-              </svg>
-              Verifying...
-            </span>
-          ) : (
-            "Start Authentication"
-          )}
-        </button>
-
-        {status !== "idle" && (
-          <div className={`mt-6 text-center ${getStatusColor()}`}>
-            <p className="font-semibold text-lg">Status: {status}</p>
-            {error && <p className="text-red-500 mt-2">{error.message}</p>}
-          </div>
-        )}
-      </form>
+      </div>
     </div>
   );
 };

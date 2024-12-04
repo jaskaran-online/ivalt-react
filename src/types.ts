@@ -19,6 +19,7 @@ export interface UserData {
 }
 
 export interface BiometricResultResponse {
+  data: any;
   success: boolean;
   authenticated: boolean;
   message: string;
