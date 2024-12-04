@@ -24,7 +24,8 @@ export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({
   useEffect(() => {
     if (phoneInputRef.current) {
       const iti = intlTelInput(phoneInputRef.current, {
-        utilsScript: "node_modules/intl-tel-input/build/js/utils.js",
+        utilsScript:
+          "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js",
         separateDialCode: true,
         initialCountry: "auto",
         geoIpLookup: (callback) => {
