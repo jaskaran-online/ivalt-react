@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import intlTelInput from "intl-tel-input";
 import "intl-tel-input/build/css/intlTelInput.min.css";
+import "../styles/biometric-form.css";
 import { useBiometricAuth } from "../hooks/useBiometricAuth";
 
 interface BiometricAuthFormProps {
@@ -67,61 +68,53 @@ export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({ onSuccess 
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 bg-gray-50">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-gray-200 transition-all duration-300 hover:shadow-xl">
-        <div className="p-6 sm:p-8">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800 text-center">
-            Biometric Authentication
-          </h2>
+      <div className="biometric-form-container">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800 text-center">
+          Biometric Authentication
+        </h2>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                Phone Number
-              </label>
-              <div className="relative">
-                <input
-                  ref={phoneInputRef}
-                  type="tel"
-                  id="phone"
-                  className="block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out shadow-sm"
-                  onChange={handlePhoneChange}
-                />
-              </div>
-              {phoneNumber && !itiInstance?.isValidNumber() && (
-                <p className="text-sm text-red-500 mt-1">
-                  Please enter a valid phone number
-                </p>
-              )}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+              Phone Number
+            </label>
+            <div className="biometric-input-container">
+              <input
+                ref={phoneInputRef}
+                type="tel"
+                id="phone"
+                className={`biometric-input ${phoneNumber && !itiInstance?.isValidNumber() ? 'error' : ''}`}
+                onChange={handlePhoneChange}
+              />
             </div>
-
-            <button
-              type="submit"
-              disabled={status === "polling"}
-              className={`w-full py-3.5 px-4 rounded-lg text-white font-medium transition-all duration-300 ease-in-out shadow-sm
-                ${status !== "polling"
-                  ? "bg-blue-600 hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                  : "bg-gray-400 cursor-not-allowed"
-                }`}
-            >
-              {status === "polling" ? (
-                <span className="flex items-center justify-center space-x-2">
-                  <span>Verifying...</span>
-                </span>
-              ) : (
-                "Start Authentication"
-              )}
-            </button>
-
-            {status !== "idle" && (
-              <div className={`mt-6 p-4 rounded-lg ${status === "success" ? "bg-green-50" : status === "error" ? "bg-red-50" : "bg-blue-50"}`}>
-                <div className={`text-center ${getStatusColor()}`}>
-                  <p className="font-semibold text-lg capitalize">Status: {status}</p>
-                  {error && <p className="text-red-500 mt-2">{error.message}</p>}
-                </div>
-              </div>
+            {phoneNumber && !itiInstance?.isValidNumber() && (
+              <p className="text-sm text-red-500 mt-1">
+                Please enter a valid phone number
+              </p>
             )}
-          </form>
-        </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={status === "polling"}
+            className="biometric-button"
+          >
+            {status === "polling" ? (
+              <span className="flex items-center justify-center space-x-2">
+                <span>Verifying...</span>
+              </span>
+            ) : (
+              "Start Authentication"
+            )}
+          </button>
+
+          {status !== "idle" && (
+            <div className={`status-message ${status}`}>
+              <p className="font-semibold text-lg capitalize">Status: {status}</p>
+              {error && <p className="mt-2">{error.message}</p>}
+            </div>
+          )}
+        </form>
       </div>
     </div>
   );
