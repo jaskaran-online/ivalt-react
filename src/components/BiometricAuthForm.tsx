@@ -1,21 +1,17 @@
 import React, { useRef, useEffect, useState } from "react";
 import intlTelInput from "intl-tel-input";
 import "intl-tel-input/build/css/intlTelInput.min.css";
-import { initializeIValt, useBiometricAuth } from "ivalt-react";
+import { useBiometricAuth } from "../hooks/useBiometricAuth";
 
 interface BiometricAuthFormProps {
   onSuccess?: (userData: any) => void;
 }
-
-const UTILS_SCRIPT_URL =
-  "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js";
 
 export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({
   onSuccess,
 }) => {
   const phoneInputRef = useRef<HTMLInputElement>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [isValidNumber, setIsValidNumber] = useState(false);
   const [itiInstance, setItiInstance] = useState<any>(null);
 
   const { status, error, startAuth, userData } = useBiometricAuth({
@@ -26,33 +22,24 @@ export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({
 
   useEffect(() => {
     if (phoneInputRef.current) {
-      const loadUtils = new Promise<void>((resolve) => {
-        const script = document.createElement("script");
-        script.src = UTILS_SCRIPT_URL;
-        script.async = true;
-        script.onload = () => resolve();
-        document.body.appendChild(script);
+      const iti = intlTelInput(phoneInputRef.current, {
+        utilsScript:
+          "https://cdn.jsdelivr.net/npm/intl-tel-input@24.7.0/build/js/utils.js",
+        separateDialCode: true,
+        initialCountry: "auto",
+        geoIpLookup: (callback) => {
+          fetch("https://ipapi.co/json")
+            .then((res) => res.json())
+            .then((data) => callback(data.country_code))
+            .catch(() => callback("us"));
+        },
       });
 
-      loadUtils.then(() => {
-        const iti = intlTelInput(phoneInputRef.current!, {
-          utilsScript: UTILS_SCRIPT_URL,
-          separateDialCode: true,
-          initialCountry: "auto",
-          geoIpLookup: (callback) => {
-            fetch("https://ipapi.co/json")
-              .then((res) => res.json())
-              .then((data) => callback(data.country_code))
-              .catch(() => callback("us"));
-          },
-        });
+      setItiInstance(iti);
 
-        setItiInstance(iti);
-
-        return () => {
-          iti.destroy();
-        };
-      });
+      return () => {
+        iti.destroy();
+      };
     }
   }, []);
 
@@ -64,7 +51,7 @@ export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (itiInstance && isValidNumber) {
+    if (itiInstance) {
       const fullNumber = itiInstance.getNumber();
       await startAuth(fullNumber);
     }
@@ -73,7 +60,6 @@ export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({
   const handlePhoneChange = () => {
     if (itiInstance) {
       setPhoneNumber(itiInstance.getNumber());
-      setIsValidNumber(itiInstance.isValidNumber());
     }
   };
 
@@ -111,7 +97,7 @@ export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({
             className="block w-full px-4 py-3 rounded-md border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             onChange={handlePhoneChange}
           />
-          {!isValidNumber && phoneNumber && (
+          {phoneNumber && (
             <p className="text-sm text-red-600">
               Please enter a valid phone number
             </p>
@@ -120,10 +106,10 @@ export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({
 
         <button
           type="submit"
-          disabled={!isValidNumber || status === "polling"}
+          disabled={status === "polling"}
           className={`w-full py-3 px-4 rounded-md text-white font-medium transition-colors
             ${
-              isValidNumber && status !== "polling"
+              status !== "polling"
                 ? "bg-blue-600 hover:bg-blue-700"
                 : "bg-gray-400 cursor-not-allowed"
             }`}
