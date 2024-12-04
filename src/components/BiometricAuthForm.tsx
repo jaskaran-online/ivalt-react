@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import intlTelInput from "intl-tel-input";
-import "intl-tel-input/build/css/intlTelInput.min.css";
+import "intl-tel-input/build/css/intlTelInput.css";
 import "../styles/biometric-form.css";
 import { useBiometricAuth } from "../hooks/useBiometricAuth";
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { initializeIValt } from "ivalt-react";
-import { BiometricAuthForm } from "ivalt-react/dist/components/BiometricAuthForm";
+import { initializeIValt, BiometricAuthForm } from "ivalt-react";
+import "ivalt-react/src/styles/biometric-form.css";
 
 // Initialize the package with your configuration
 initializeIValt({
@@ -77,31 +77,4 @@ function App() {
   );
 }
 
-// Example with minimal props
-function MinimalExample() {
-  return (
-    <div className="container">
-      <BiometricAuthForm
-        onSuccess={(userData) => console.log('Success:', userData)}
-      />
-    </div>
-  );
-}
-
-// Example with custom styling and error handling
-function StyledExample() {
-  return (
-    <div className="auth-container">
-      <BiometricAuthForm
-        className="styled-form"
-        title="Secure Authentication"
-        buttonText="Authenticate"
-        onSuccess={(userData) => console.log('Success:', userData)}
-        onError={(error) => console.error('Error:', error)}
-        customErrorMessage="Invalid phone number format"
-      />
-    </div>
-  );
-}
-
-export { App as default, MinimalExample, StyledExample };
+export default App;

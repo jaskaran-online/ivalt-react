@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0",
+  "version": "1.2.2",
   "keywords": [
     "ivalt",
     "biometric",
@@ -8,6 +8,10 @@
     "hooks",
     "form",
     "passwordless"
+  ],
+  "files": [
+    "dist",
+    "src/styles"
   ],
   "name": "ivalt-react",
   "author": "iVALT::jaskaran.singh@ivalt.com",
@@ -18,6 +22,7 @@
   "description": "React hooks for iVALT Biometric Authentication",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "style": "src/styles/biometric-form.css",
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build"
