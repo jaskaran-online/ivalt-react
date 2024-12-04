@@ -1,0 +1,262 @@
+BIOMETRIC AUTH FORM COMPONENT USAGE GUIDE
+=====================================
+
+INSTALLATION
+------------
+npm install ivalt-api-hook
+
+
+BASIC USAGE
+-----------
+import { BiometricAuthForm } from 'ivalt-api-hook';
+
+// Minimal implementation
+<BiometricAuthForm onSuccess={(userData) => console.log(userData)} />
+
+
+AVAILABLE PROPS
+--------------
+1. Core Props:
+   - onSuccess: (userData: any) => void
+     Handles successful authentication
+   
+   - onError: (error: Error) => void
+     Handles authentication errors
+   
+   - onStatusChange: (status: string) => void
+     Tracks authentication status changes
+   
+   - onPhoneNumberChange: (phoneNumber: string, isValid: boolean) => void
+     Monitors phone number changes and validity
+
+2. UI Customization Props:
+   - customErrorMessage: string
+     Default: "Please enter a valid phone number"
+   
+   - hideStatusMessage: boolean
+     Default: false
+   
+   - className: string
+     Default: ""
+   
+   - buttonText: string
+     Default: "Start Authentication"
+   
+   - loadingText: string
+     Default: "Verifying..."
+   
+   - title: string
+     Default: "Biometric Authentication"
+
+
+EXAMPLE IMPLEMENTATIONS
+----------------------
+
+1. Basic Implementation with Success Handling:
+   import { BiometricAuthForm } from 'ivalt-api-hook';
+   
+   function AuthenticationPage() {
+     const handleSuccess = (userData) => {
+       // Handle successful authentication
+       console.log('User authenticated:', userData);
+       // Navigate to next page or update UI
+       router.push('/dashboard');
+     };
+
+     return (
+       <BiometricAuthForm
+         onSuccess={handleSuccess}
+       />
+     );
+   }
+
+2. Complete Implementation with Error Handling:
+   import { BiometricAuthForm } from 'ivalt-api-hook';
+   import { useToast } from 'your-toast-library';
+
+   function SecureAuthPage() {
+     const toast = useToast();
+     const [isLoading, setIsLoading] = useState(false);
+
+     const handleSuccess = (userData) => {
+       toast.success('Authentication successful!');
+       // Process user data
+       processUserAuthentication(userData);
+     };
+
+     const handleError = (error) => {
+       toast.error(error.message || 'Authentication failed');
+       // Log error to monitoring service
+       logError({
+         type: 'AUTH_ERROR',
+         message: error.message,
+         timestamp: new Date()
+       });
+     };
+
+     const handleStatusChange = (status) => {
+       setIsLoading(status === 'polling');
+       // Update UI based on status
+       switch (status) {
+         case 'polling':
+           toast.info('Verifying your identity...');
+           break;
+         case 'success':
+           toast.success('Verification complete!');
+           break;
+         case 'error':
+           toast.error('Verification failed');
+           break;
+       }
+     };
+
+     const handlePhoneChange = (number, isValid) => {
+       // Track phone number changes
+       analytics.track('PHONE_NUMBER_ENTERED', {
+         isValid,
+         countryCode: number.slice(0, 2)
+       });
+     };
+
+     return (
+       <div className="auth-container">
+         <BiometricAuthForm
+           onSuccess={handleSuccess}
+           onError={handleError}
+           onStatusChange={handleStatusChange}
+           onPhoneNumberChange={handlePhoneChange}
+           customErrorMessage="Please enter a valid mobile number to continue"
+           hideStatusMessage={false}
+           className="custom-auth-form"
+           buttonText="Verify Identity"
+           loadingText="Verifying..."
+           title="Secure Authentication"
+         />
+         {isLoading && <LoadingOverlay />}
+       </div>
+     );
+   }
+
+3. Custom Styled Implementation:
+   import { BiometricAuthForm } from 'ivalt-api-hook';
+   import styles from './AuthForm.module.css';
+
+   function StyledAuthForm() {
+     return (
+       <BiometricAuthForm
+         className={styles.authForm}
+         buttonText="Continue with Phone"
+         customErrorMessage="Invalid phone number format"
+         title="Phone Verification"
+         onSuccess={(userData) => {
+           // Handle success
+           updateUserProfile(userData);
+           showSuccessMessage();
+         }}
+         onError={(error) => {
+           // Handle error
+           logErrorToService(error);
+           showErrorNotification(error.message);
+         }}
+       />
+     );
+   }
+
+4. Enterprise Implementation with Analytics:
+   import { BiometricAuthForm } from 'ivalt-api-hook';
+   import { useAnalytics, useAuth, useToast } from './hooks';
+
+   function EnterpriseAuthForm() {
+     const analytics = useAnalytics();
+     const { updateAuthState } = useAuth();
+     const toast = useToast();
+
+     const handleAuthentication = async (userData) => {
+       try {
+         // Update authentication state
+         await updateAuthState(userData);
+         
+         // Track successful authentication
+         analytics.track('AUTHENTICATION_SUCCESS', {
+           userId: userData.id,
+           timestamp: new Date(),
+           method: 'biometric'
+         });
+
+         // Show success message
+         toast.success('Successfully authenticated!');
+         
+         // Redirect to dashboard
+         router.push('/dashboard');
+       } catch (error) {
+         handleError(error);
+       }
+     };
+
+     const handleError = (error) => {
+       // Log error
+       console.error('Authentication error:', error);
+       
+       // Track error
+       analytics.track('AUTHENTICATION_ERROR', {
+         error: error.message,
+         timestamp: new Date()
+       });
+
+       // Show error message
+       toast.error('Authentication failed. Please try again.');
+     };
+
+     return (
+       <div className="enterprise-auth">
+         <BiometricAuthForm
+           onSuccess={handleAuthentication}
+           onError={handleError}
+           onStatusChange={(status) => {
+             analytics.track('AUTH_STATUS_CHANGE', { status });
+           }}
+           onPhoneNumberChange={(number, isValid) => {
+             analytics.track('PHONE_NUMBER_INPUT', { 
+               isValid,
+               timestamp: new Date()
+             });
+           }}
+           className="enterprise-form"
+           buttonText="Authenticate"
+           loadingText="Securing..."
+           title="Enterprise Authentication"
+           customErrorMessage="Please provide a valid corporate phone number"
+         />
+       </div>
+     );
+   }
+
+STATUS TYPES
+------------
+- idle: Initial state
+- polling: Authentication in progress
+- success: Authentication successful
+- error: Authentication failed
+
+
+CSS CLASSES
+-----------
+Default classes available for styling:
+- biometric-form-container: Main container
+- biometric-input: Phone number input
+- biometric-button: Submit button
+- status-message: Status message container
+- error: Error state styles
+- success: Success state styles
+- polling: Loading state styles
+
+
+IMPORTANT NOTES
+--------------
+1. All callback props are optional
+2. Component is mobile-responsive
+3. Uses intl-tel-input for phone input
+4. Custom styles can be added via className prop
+5. Error messages can be customized
+6. Status message section can be hidden
+7. All text elements can be customized

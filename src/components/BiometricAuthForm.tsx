@@ -6,12 +6,33 @@ import { useBiometricAuth } from "../hooks/useBiometricAuth";
 
 interface BiometricAuthFormProps {
   onSuccess?: (userData: any) => void;
+  onError?: (error: Error) => void;
+  onStatusChange?: (status: string) => void;
+  onPhoneNumberChange?: (phoneNumber: string, isValid: boolean) => void;
+  customErrorMessage?: string;
+  hideStatusMessage?: boolean;
+  className?: string;
+  buttonText?: string;
+  loadingText?: string;
+  title?: string;
 }
 
-export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({ onSuccess }) => {
+export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({
+  onSuccess,
+  onError,
+  onStatusChange,
+  onPhoneNumberChange,
+  customErrorMessage,
+  hideStatusMessage = false,
+  className = '',
+  buttonText = 'Start Authentication',
+  loadingText = 'Verifying...',
+  title = 'Biometric Authentication'
+}) => {
   const phoneInputRef = useRef<HTMLInputElement>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [itiInstance, setItiInstance] = useState<any>(null);
+  const [validationError, setValidationError] = useState<string>("");
 
   const { status, error, startAuth, userData } = useBiometricAuth({
     pollingInterval: 2000,
@@ -43,35 +64,57 @@ export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({ onSuccess 
     }
   }, [userData, onSuccess]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (itiInstance) {
-      const fullNumber = itiInstance.getNumber();
-      await startAuth(fullNumber);
+  useEffect(() => {
+    if (error && onError) {
+      onError(error);
     }
-  };
+  }, [error, onError]);
+
+  useEffect(() => {
+    if (onStatusChange) {
+      onStatusChange(status);
+    }
+  }, [status, onStatusChange]);
 
   const handlePhoneChange = () => {
     if (itiInstance) {
-      setPhoneNumber(itiInstance.getNumber());
+      const number = itiInstance.getNumber();
+      const isValid = itiInstance.isValidNumber();
+      setPhoneNumber(number);
+      setValidationError(isValid ? "" : customErrorMessage || "Please enter a valid phone number");
+      
+      if (onPhoneNumberChange) {
+        onPhoneNumberChange(number, isValid);
+      }
     }
   };
 
-  const getStatusColor = () => {
-    switch (status) {
-      case "success": return "text-green-500";
-      case "error": return "text-red-500";
-      case "polling": return "text-blue-500";
-      default: return "text-gray-500";
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (itiInstance) {
+      if (!itiInstance.isValidNumber()) {
+        setValidationError(customErrorMessage || "Please enter a valid phone number");
+        return;
+      }
+      const fullNumber = itiInstance.getNumber();
+      try {
+        await startAuth(fullNumber);
+      } catch (err) {
+        if (onError) {
+          onError(err as Error);
+        }
+      }
     }
   };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 bg-gray-50">
-      <div className="biometric-form-container">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800 text-center">
-          Biometric Authentication
-        </h2>
+      <div className={`biometric-form-container ${className}`}>
+        {title && (
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800 text-center">
+            {title}
+          </h2>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
@@ -83,13 +126,13 @@ export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({ onSuccess 
                 ref={phoneInputRef}
                 type="tel"
                 id="phone"
-                className={`biometric-input ${phoneNumber && !itiInstance?.isValidNumber() ? 'error' : ''}`}
+                className={`biometric-input ${validationError ? 'error' : ''}`}
                 onChange={handlePhoneChange}
               />
             </div>
-            {phoneNumber && !itiInstance?.isValidNumber() && (
+            {validationError && (
               <p className="text-sm text-red-500 mt-1">
-                Please enter a valid phone number
+                {validationError}
               </p>
             )}
           </div>
@@ -101,14 +144,14 @@ export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({ onSuccess 
           >
             {status === "polling" ? (
               <span className="flex items-center justify-center space-x-2">
-                <span>Verifying...</span>
+                <span>{loadingText}</span>
               </span>
             ) : (
-              "Start Authentication"
+              buttonText
             )}
           </button>
 
-          {status !== "idle" && (
+          {!hideStatusMessage && status !== "idle" && (
             <div className={`status-message ${status}`}>
               <p className="font-semibold text-lg capitalize">Status: {status}</p>
               {error && <p className="mt-2">{error.message}</p>}

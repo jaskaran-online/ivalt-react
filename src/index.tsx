@@ -1,2 +1,2 @@
 import "./index.css";
-// ... rest of your imports
+import "./styles/biometric-form.css";
