@@ -22,7 +22,7 @@ export const requestBiometricAuth = async (
 ): Promise<BiometricAuthResponse> => {
   const api = createAxiosInstance();
   const response = await api.post<BiometricAuthResponse>(
-    "/biometric-auth-request",
+    "/biometric-geo-fence-auth-results",
     params
   );
   return response.data;
@@ -32,8 +32,9 @@ export const checkBiometricResult = async (
   mobileNumber: string
 ): Promise<BiometricResultResponse> => {
   const api = createAxiosInstance();
-  const response = await api.get<BiometricResultResponse>(
-    `/biometric-result-request/${mobileNumber}`
+  const response = await api.post<BiometricResultResponse>(
+    `/biometric-geo-fence-auth-results`,
+    { mobileNumber }
   );
   return response.data;
 };

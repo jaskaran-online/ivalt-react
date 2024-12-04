@@ -44,7 +44,7 @@ export const useBiometricAuth = ({
           return;
         }
 
-        setAttempts((prev) => {
+        setAttempts((prev: number) => {
           if (prev >= maxAttempts) {
             const timeoutError = new Error("Authentication timeout");
             setStatus("error");
@@ -55,7 +55,7 @@ export const useBiometricAuth = ({
           }
           return prev + 1;
         });
-      } catch (err) {
+      } catch (err: any) {
         const error = err as Error;
         if (axios.isAxiosError(err)) {
           if (err.response?.status === 422) {
@@ -99,7 +99,7 @@ export const useBiometricAuth = ({
 
       setStatus("polling");
       setIsPolling(true);
-    } catch (err) {
+    } catch (err: any) {
       const error = err as Error;
       setStatus("error");
       setError(error);
