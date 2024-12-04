@@ -12,7 +12,7 @@ const createAxiosInstance = () => {
     baseURL: config.baseURL,
     headers: {
       "Content-Type": "application/json",
-      ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {}),
+      "x-api-key": config.apiKey,
     },
   });
 };
