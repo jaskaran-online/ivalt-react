@@ -87,13 +87,13 @@ interface UserData {
   id: string;
   name: string;
   email: string;
-  mobileNumber: string;
+  mobile: string;
 }
 
 interface BiometricAuthHookResult {
   status: BiometricStatus;
   error: Error | null;
-  startAuth: (mobileNumber: string) => Promise<void>;
+  startAuth: (mobile: string) => Promise<void>;
   stopPolling: () => void;
   userData: UserData | null;
   isPolling: boolean;

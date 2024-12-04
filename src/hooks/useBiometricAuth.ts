@@ -88,14 +88,14 @@ export const useBiometricAuth = ({
     onError,
   ]);
 
-  const startAuth = async (mobileNumber: string) => {
+  const startAuth = async (mobile: string) => {
     try {
       setStatus("requesting");
       setError(null);
       setUserData(null);
-      setCurrentMobileNumber(mobileNumber);
+      setCurrentMobileNumber(mobile);
 
-      await requestBiometricAuth({ mobileNumber, requestFrom });
+      await requestBiometricAuth({ mobile, requestFrom });
 
       setStatus("polling");
       setIsPolling(true);

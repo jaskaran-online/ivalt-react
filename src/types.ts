@@ -1,5 +1,5 @@
 export interface BiometricAuthRequestParams {
-  mobileNumber: string;
+  mobile: string;
   requestFrom: string;
   // Add any other required parameters
 }
@@ -14,7 +14,7 @@ export interface UserData {
   id: string;
   name: string;
   email: string;
-  mobileNumber: string;
+  mobile: string;
   // Add any other user fields you need
 }
 
@@ -35,7 +35,7 @@ export type BiometricStatus =
 export interface BiometricAuthHookResult {
   status: BiometricStatus;
   error: Error | null;
-  startAuth: (mobileNumber: string) => Promise<void>;
+  startAuth: (mobile: string) => Promise<void>;
   stopPolling: () => void;
   userData: UserData | null;
   isPolling: boolean;

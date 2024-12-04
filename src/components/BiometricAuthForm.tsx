@@ -153,7 +153,7 @@ export const BiometricAuthForm: React.FC<BiometricAuthFormProps> = ({
             <div className="space-y-2 text-sm text-green-700">
               <p>Name: {userData.name}</p>
               <p>Email: {userData.email}</p>
-              <p>Mobile: {userData.mobileNumber}</p>
+              <p>Mobile: {userData.mobile}</p>
             </div>
           </div>
         )}
